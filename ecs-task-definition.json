@@ -1,0 +1,24 @@
+{
+  "family": "nest-container",
+  "executionRoleArn": "arn:aws:iam::256640402455:role/ecsTaskExecutionRole",
+  "networkMode": "awsvpc",
+  "containerDefinitions": [
+      {
+          "name": "nest-container",
+          "image": "256640402455.dkr.ecr.us-east-2.amazonaws.com/nest-container:latest",
+          "portMappings": [
+            {
+              "containerPort": 3000,
+              "hostPort": 3000,
+              "protocol": "tcp"
+            }
+          ],
+          "essential": true
+      }
+  ],
+  "requiresCompatibilities": [
+      "FARGATE"
+  ],
+  "memory": "512",
+  "cpu": "256"
+}
