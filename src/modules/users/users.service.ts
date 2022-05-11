@@ -1,8 +1,6 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { FilterQuery } from 'mongoose';
+import { Injectable } from '@nestjs/common';
+import { FilterQuery, Types } from 'mongoose';
 import { Status } from 'src/base';
-import { USER } from 'src/constants/base.constant';
-import { hash } from 'src/helpers/crypto';
 import { EncryptHelper } from 'src/helpers/encrypt.helper';
 import { ConfigService } from 'src/shared/config/config.service';
 
@@ -17,12 +15,12 @@ export class UsersService {
   constructor(private readonly repo: UserRepository, private configService: ConfigService) {}
 
   async findOne(params: FilterQuery<Users>) {
-    return this.repo.findOne(params);
+    return await this.repo.findOne(params);
   }
 
   async findById(id: string) {
-    console.log(id);
-    return USER;
+    console.log('id', id);
+    return await this.repo.findById(new Types.ObjectId(id));
   }
 
   async register(data: AuthDto) {

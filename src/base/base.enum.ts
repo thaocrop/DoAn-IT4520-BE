@@ -3,3 +3,12 @@ export enum Status {
   INACTIVE = 'INACTIVE',
   DELETED = 'DELETED',
 }
+
+export enum StatusEnum {
+  Active = 'ACTIVE',
+  InActive = 'INACTIVE',
+}
+
+export enum RequestHeadersEnum {
+  Authorization = 'authorization',
+}

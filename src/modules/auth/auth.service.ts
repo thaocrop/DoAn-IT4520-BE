@@ -2,6 +2,7 @@ import { BadRequestException, forwardRef, Inject, Injectable, UnauthorizedExcept
 import { TokenHelper } from 'src/helpers/token.helper';
 import { ConfigService } from 'src/shared/config/config.service';
 import { EncryptHelper } from 'src/helpers/encrypt.helper';
+import { ErrorHelper } from 'src/helpers/error.utils';
 
 import { UsersService } from '../users/users.service';
 
@@ -18,22 +19,22 @@ export class AuthService {
     //WHAT: check user name
     const user = await this.userService.findOne({ user_name: params.user_name });
     if (!user) {
-      throw new UnauthorizedException('Tài Khoản chưa tồn tại.');
+      ErrorHelper.UnauthorizedException('Tài Khoản chưa tồn tại.');
     }
     //check password
     const checkPW = EncryptHelper.compare(user.password, params.password);
     if (!checkPW) {
-      throw new UnauthorizedException('Tài khoản hoặc mật khẩu không chính xác.');
+      ErrorHelper.UnauthorizedException('Tài khoản hoặc mật khẩu không chính xác.');
     }
 
-    return this._generateToken(user.id);
+    return this._generateToken(user._id);
   }
 
   async register(params: AuthDto) {
     //WHAT: check existed user name
     const existedUser = await this.userService.findOne({ user_name: params.user_name });
     if (existedUser) {
-      throw new BadRequestException('Tài khoản đã tồn tại');
+      ErrorHelper.BadRequestException('Tài khoản đã tồn tại');
     }
 
     //WHAT: make new user
