@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import * as mongoosePaginate from 'mongoose-paginate-v2';
+import mongoosePaginate from 'mongoose-paginate-v2';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 import mongooseAggregatePaginate = require('mongoose-aggregate-paginate-v2');
 import { BaseSchema, Status } from 'src/base';
@@ -25,7 +25,6 @@ class Users extends BaseSchema {
 }
 
 const UserSchema = SchemaFactory.createForClass(Users);
-//@ts-ignore
 UserSchema.plugin(mongoosePaginate);
 UserSchema.plugin(mongooseAggregatePaginate);
 

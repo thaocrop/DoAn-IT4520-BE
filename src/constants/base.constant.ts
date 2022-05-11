@@ -6,10 +6,8 @@ export const SPEC_KEY = 'SPEC';
 
 export const USER = {
   id: '1',
-  password: 'Test@123',
-  email: 'test@email.com',
-  name: 'name',
-  phone: '0123456789',
+  password: 'password@123',
+  username: 'user123',
   userType: UserType.CLIENT,
   permissions: [],
 };

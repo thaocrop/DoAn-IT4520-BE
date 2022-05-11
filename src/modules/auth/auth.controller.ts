@@ -2,7 +2,7 @@ import { Controller, Post, Body, Res, Get } from '@nestjs/common';
 import { Response } from 'express';
 
 import { AuthService } from './auth.service';
-import { LoginDto } from './dto/auth.dto';
+import { LoginDto, AuthDto } from './dto/auth.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -14,13 +14,18 @@ export class AuthController {
   }
 
   @Post('login')
-  async login(@Body() payload: LoginDto, @Res() res: Response) {
-    const { accessToken, refreshToken, expires } = await this.authService.login(payload);
-    res.cookie('JWT', 'Bearer ' + accessToken, {
-      maxAge: expires,
-      httpOnly: true,
-    });
+  async login(@Body() payload: AuthDto, @Res() res: Response) {
+    const { accessToken, refreshToken } = await this.authService.login(payload);
+
     res.json({ accessToken, refreshToken });
     return { accessToken, refreshToken };
+  }
+
+  @Post('register')
+  async register(@Body() payload: AuthDto, @Res() res: Response) {
+    const { accessToken, refreshToken } = await this.authService.register(payload);
+
+    res.json({ accessToken, refreshToken });
+    return {};
   }
 }

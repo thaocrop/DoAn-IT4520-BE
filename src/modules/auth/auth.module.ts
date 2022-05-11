@@ -1,4 +1,4 @@
-import { Global, Module } from '@nestjs/common';
+import { Global, Module, forwardRef } from '@nestjs/common';
 
 import { UsersModule } from '../users/users.module';
 
@@ -7,7 +7,7 @@ import { AuthController } from './auth.controller';
 
 @Global()
 @Module({
-  imports: [UsersModule],
+  imports: [forwardRef(() => UsersModule)],
   controllers: [AuthController],
   providers: [AuthService],
   exports: [AuthService],
