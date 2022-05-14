@@ -1,0 +1,9 @@
+[{
+  "name": "Thành phố Hà Nội",
+  "codename": "thanh_pho_ha_noi",
+  "division_type": "CITY",
+  "short_codename": "thanh_pho_ha_noi",
+  "lat": "21.0245",
+  "lng": "105.84117",
+  "status": "ACTIVE"
+}]
