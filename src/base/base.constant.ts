@@ -11,3 +11,11 @@ export const USER = {
   userType: UserType.CLIENT,
   permissions: [],
 };
+
+export const messageError = {
+  FILE_NOT_FOUND: 'File not found!',
+  FILE_REQUIRE_SINGLE: 'The feature only upload 1 file',
+  FILE_TYPE_INVALID: 'Filetype invalid',
+  FILE_OVERSIZE: 'FILE oversize',
+  FILES_NOT_FOUND: 'FILE not found',
+};

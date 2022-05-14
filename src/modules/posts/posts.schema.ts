@@ -5,6 +5,8 @@ import mongoosePaginate from 'mongoose-paginate-v2';
 import mongooseAggregatePaginate = require('mongoose-aggregate-paginate-v2');
 import { BaseSchema, Status } from 'src/base';
 
+import { Locations } from '../locations';
+
 @Schema({
   timestamps: true,
 })
@@ -17,6 +19,9 @@ class Posts extends BaseSchema {
 
   @Prop({ type: String })
   slug: string;
+
+  @Prop({ type: Locations })
+  location: Locations;
 
   @Prop({ type: String })
   image_url: string;

@@ -15,8 +15,9 @@ export class PostsController {
   }
 
   @Post('')
-  async create(@Request() req, @Body() data) {
+  async create(@Request() req, @Body() data: PostDto) {
     const user = req.user;
+
     return await this.postsService.create(user, data);
   }
 }

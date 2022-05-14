@@ -1,3 +1,4 @@
+import { Types } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from 'src/shared/config/config.service';
 
@@ -9,5 +10,9 @@ export class LocationsService {
 
   async getAll() {
     return await this.repo.findAll();
+  }
+
+  async findById(id: string) {
+    return await this.repo.findById(new Types.ObjectId(id));
   }
 }
