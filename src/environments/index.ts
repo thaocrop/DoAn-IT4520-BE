@@ -10,5 +10,6 @@ const NODE_ENV: string = process.env.NODE_ENV || 'dev';
 // application
 const SERVER_PORT: number = +process.env.SERVER_PORT || 3000;
 const MONGO_URL: string = process.env.MONGO_URL || NEED_TO_CONFIGURED;
+const BACKEND_HOST: string = process.env.BACKEND_HOST || 'http://localhost:3000/';
 
-export { NODE_ENV, SERVER_PORT, MONGO_URL };
+export { NODE_ENV, SERVER_PORT, MONGO_URL, BACKEND_HOST };
