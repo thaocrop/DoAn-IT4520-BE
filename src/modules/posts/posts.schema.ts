@@ -8,8 +8,8 @@ import { BaseSchema, Status, IObjectId } from 'src/base';
 import { Locations } from '../locations';
 
 class Comment extends BaseSchema {
-  @Prop({ type: Types.ObjectId })
-  user_id: IObjectId;
+  @Prop({ type: String })
+  user_name: string;
 
   @Prop({ type: String })
   comment: string;
@@ -49,7 +49,7 @@ class Posts extends BaseSchema {
   like: number;
 
   @Prop({ type: [CommentSchema], default: [] })
-  comment: Comment[];
+  comments: Comment[];
 
   @Prop({ type: [Number], default: [] })
   rates: number[];

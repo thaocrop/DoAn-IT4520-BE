@@ -1,4 +1,5 @@
-import { IsString } from 'class-validator';
+import { IsEnum, IsNumberString, IsOptional, IsString } from 'class-validator';
+import { Status } from 'src/base';
 
 export class PostDto {
   @IsString()
@@ -21,4 +22,19 @@ export class PostDto {
 
   @IsString()
   content: string;
+}
+
+export class PostPageDto {
+  @IsOptional()
+  @IsNumberString()
+  page: number;
+
+  @IsOptional()
+  @IsNumberString()
+  limit: number;
+
+  @IsOptional()
+  @IsString()
+  @IsEnum(Status, { each: true })
+  status?: Status;
 }

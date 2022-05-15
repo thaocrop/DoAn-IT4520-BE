@@ -15,6 +15,11 @@ export class UsersController {
     return req.user;
   }
 
+  @Get('all')
+  async getAll() {
+    return await this.usersService.getAll();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usersService.findById(id);

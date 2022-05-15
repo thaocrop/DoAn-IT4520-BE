@@ -1,11 +1,13 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Types } from 'mongoose';
+import { Status } from 'src/base';
 import { ErrorHelper } from 'src/helpers';
 import { ConfigService } from 'src/shared/config/config.service';
 
 import { UsersService } from '../users';
 
 import { LocationsService } from './../locations/locations.service';
-import { PostDto } from './posts.dto';
+import { PostDto, PostPageDto } from './posts.dto';
 import { PostsRepository } from './posts.repository';
 
 @Injectable()
@@ -19,6 +21,34 @@ export class PostsService {
 
   async getAll() {
     return await this.repo.findAll();
+  }
+
+  async findById(id: string) {
+    return await this.repo.findById(new Types.ObjectId(id));
+  }
+
+  async delete(id: string) {
+    return await this.repo.delete(new Types.ObjectId(id));
+  }
+
+  async getList(params: PostPageDto) {
+    const { page, limit, status } = params;
+    const options: any = {
+      limit: limit ? Number(limit) : 10,
+      page: page ? Number(page) : 1,
+      createdAt: -1,
+    };
+    // if {status}
+    const aggQuery = [
+      {
+        $match: {
+          status: status || { $ne: Status.DELETED },
+        },
+      },
+    ];
+    const aggregateModel = this.repo.getModel().aggregate(aggQuery);
+    const res = await this.repo.getAggModel().aggregatePaginate(aggregateModel, options);
+    return res;
   }
 
   async create(user, data: PostDto) {

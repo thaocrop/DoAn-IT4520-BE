@@ -1,12 +1,11 @@
-import { BadRequestException, forwardRef, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { TokenHelper } from 'src/helpers/token.helper';
 import { ConfigService } from 'src/shared/config/config.service';
-import { EncryptHelper } from 'src/helpers/encrypt.helper';
 import { ErrorHelper } from 'src/helpers/error.utils';
 
 import { UsersService } from '../users/users.service';
 
-import { LoginDto, AuthDto } from './dto/auth.dto';
+import { AuthDto } from './dto/auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -22,7 +21,8 @@ export class AuthService {
       ErrorHelper.UnauthorizedException('Tài Khoản chưa tồn tại.');
     }
     //check password
-    const checkPW = EncryptHelper.compare(user.password, params.password);
+    const checkPW = await this.userService.verifyPassword(user, params.password);
+    console.log(checkPW);
     if (!checkPW) {
       ErrorHelper.UnauthorizedException('Tài khoản hoặc mật khẩu không chính xác.');
     }
@@ -40,7 +40,7 @@ export class AuthService {
     //WHAT: make new user
     const user = await this.userService.register(params);
 
-    return this._generateToken(user.id);
+    return this._generateToken(user._id);
   }
 
   async verifyUser(id: string) {

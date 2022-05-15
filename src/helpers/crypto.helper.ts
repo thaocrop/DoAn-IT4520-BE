@@ -26,10 +26,7 @@ function getSaltFromPbkdf2(hash: string): string {
 
 /** Encrypt a string */
 export function encrypt(text: string, encryptionKey: string): string {
-  const key = crypto
-    .createHash('sha256')
-    .update(encryptionKey)
-    .digest();
+  const key = crypto.createHash('sha256').update(encryptionKey).digest();
   const iv = crypto.randomBytes(16);
   const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
   let encrypted = cipher.update(text);
@@ -40,10 +37,7 @@ export function encrypt(text: string, encryptionKey: string): string {
 
 /** Decrypt a cipher text */
 export function decrypt(cipherText: string, encryptionKey: string): string {
-  const key = crypto
-    .createHash('sha256')
-    .update(encryptionKey)
-    .digest();
+  const key = crypto.createHash('sha256').update(encryptionKey).digest();
   const iv = Buffer.from(cipherText, 'base64').slice(0, 16);
   const encryptedText = Buffer.from(cipherText, 'base64').slice(16);
   const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
@@ -52,8 +46,5 @@ export function decrypt(cipherText: string, encryptionKey: string): string {
 
 /** Hash the given string using sha-1 */
 export function hash(string: string | Buffer) {
-  return crypto
-    .createHash('sha1')
-    .update(string)
-    .digest('base64');
+  return crypto.createHash('sha1').update(string).digest('base64');
 }
