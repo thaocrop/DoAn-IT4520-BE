@@ -7,7 +7,7 @@ import { ConfigService } from 'src/shared/config/config.service';
 import { UsersService } from '../users';
 
 import { LocationsService } from './../locations/locations.service';
-import { PostDto, PostPageDto } from './posts.dto';
+import { PostDto, PostPageDto, UpdatePostDto } from './posts.dto';
 import { PostsRepository } from './posts.repository';
 
 @Injectable()
@@ -24,11 +24,11 @@ export class PostsService {
   }
 
   async findById(id: string) {
-    return await this.repo.findById(new Types.ObjectId(id));
+    return await this.repo.findById(id);
   }
 
   async delete(id: string) {
-    return await this.repo.delete(new Types.ObjectId(id));
+    return await this.repo.forceDelete(id);
   }
 
   async getList(params: PostPageDto) {
@@ -62,7 +62,6 @@ export class PostsService {
     //WHAT: Check exited slug
     const exitedPost = await this.repo.findOne({ slug: data.slug });
     if (exitedPost) {
-      console.log(exitedPost);
       ErrorHelper.BadRequestException('Slug đã tồn tại');
     }
 
@@ -72,5 +71,30 @@ export class PostsService {
       ErrorHelper.BadRequestException('Địa chỉ không tồn tại');
     }
     return await this.repo.create({ user_id: author._id, user_name: author.user_name, ...data, location });
+  }
+
+  async approvePost(id: string) {
+    return await this.updatePost(id, { status: Status.ACTIVE });
+  }
+
+  async updatePost(id: string, params: Partial<PostDto> & Partial<UpdatePostDto>) {
+    //WHAT: find post
+    const post = await this.findById(id);
+    if (!post) {
+      ErrorHelper.BadRequestException('Bài viết không tồn tại');
+    }
+
+    let location = post.location;
+
+    //WHAT: check new location
+    if (params.location_id) {
+      const newLocation = await this.locationsService.findById(params.location_id);
+      if (!newLocation) {
+        ErrorHelper.BadRequestException('Địa chỉ không tồn tại');
+      }
+      location = { ...newLocation };
+    }
+
+    return await this.repo.updateById(id, { ...params, location });
   }
 }

@@ -1,7 +1,7 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/common/guards/authenticate.guard';
 
-import { PostDto, PostPageDto } from './posts.dto';
+import { PostDto, PostPageDto, UpdatePostDto } from './posts.dto';
 import { PostsService } from './posts.service';
 
 @Controller('posts')
@@ -29,6 +29,11 @@ export class PostsController {
   @Get('/:id')
   async getDetail(@Param('id') id: string) {
     return await this.postsService.findById(id);
+  }
+
+  @Put('/:id')
+  async update(@Param('id') id: string, @Body() data: Partial<PostDto> & Partial<UpdatePostDto>) {
+    return await this.postsService.updatePost(id, data);
   }
 
   @Delete('/:id')

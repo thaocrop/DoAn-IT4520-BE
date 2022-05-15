@@ -23,7 +23,7 @@ export class UsersService {
   }
 
   async findById(id: string) {
-    return await this.repo.findById(new Types.ObjectId(id));
+    return await this.repo.findById(id);
   }
 
   async register(data: AuthDto) {

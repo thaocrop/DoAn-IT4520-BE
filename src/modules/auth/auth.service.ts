@@ -22,7 +22,7 @@ export class AuthService {
     }
     //check password
     const checkPW = await this.userService.verifyPassword(user, params.password);
-    console.log(checkPW);
+
     if (!checkPW) {
       ErrorHelper.UnauthorizedException('Tài khoản hoặc mật khẩu không chính xác.');
     }

@@ -23,6 +23,11 @@ export class PostDto {
   @IsString()
   content: string;
 }
+export class UpdatePostDto {
+  @IsString()
+  @IsEnum(Status, { each: true })
+  status: Status;
+}
 
 export class PostPageDto {
   @IsOptional()

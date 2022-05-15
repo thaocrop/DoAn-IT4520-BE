@@ -46,11 +46,15 @@ export class BaseRepository<Schema extends BaseSchema, T extends Document> exten
     return model;
   }
 
-  async findById(id: IObjectId, options: Record<string, unknown> = {}, populates: string[] = []): Promise<T> {
+  async findById(id: string, options: Record<string, unknown> = {}, populates: string[] = []): Promise<T> {
     if (!Types.ObjectId.isValid(id)) {
-      throw new NotFoundException('Not found Id');
+      throw new NotFoundException('Không tìm thấy Id');
     }
-    const model = await this.findOne({ [this.primaryKey]: id, status: { $ne: Status.DELETED } }, options, populates);
+    const model = await this.findOne(
+      { [this.primaryKey]: new Types.ObjectId(id), status: { $ne: Status.DELETED } },
+      options,
+      populates,
+    );
 
     if (model && populates.length) {
       for (const path of populates) {
@@ -59,7 +63,7 @@ export class BaseRepository<Schema extends BaseSchema, T extends Document> exten
     }
 
     if (!model) {
-      throw new NotFoundException(`Not found id: ${id}`);
+      throw new NotFoundException(`Không tìm thấy id: ${id}`);
     }
     return model;
   }
@@ -114,7 +118,7 @@ export class BaseRepository<Schema extends BaseSchema, T extends Document> exten
     return model;
   }
 
-  async findOrFail(id: IObjectId): Promise<T> {
+  async findOrFail(id: string): Promise<T> {
     try {
       return await this.findById(id);
     } catch (e) {
@@ -175,6 +179,13 @@ export class BaseRepository<Schema extends BaseSchema, T extends Document> exten
 
   async delete(id: IObjectId) {
     return this.updateOne({ _id: id }, { status: Status.DELETED } as any);
+  }
+
+  async forceDelete(id: string) {
+    if (!Types.ObjectId.isValid(id)) {
+      throw new NotFoundException('Không tìm thấy Id');
+    }
+    return this.model.deleteOne({ _id: new Types.ObjectId(id) }).exec();
   }
 
   async transactionProduce(handler: any, transactionOptions?: any) {
