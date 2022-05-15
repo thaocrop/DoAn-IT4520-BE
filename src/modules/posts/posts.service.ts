@@ -2,6 +2,8 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { ErrorHelper } from 'src/helpers';
 import { ConfigService } from 'src/shared/config/config.service';
 
+import { UsersService } from '../users';
+
 import { LocationsService } from './../locations/locations.service';
 import { PostDto } from './posts.dto';
 import { PostsRepository } from './posts.repository';
@@ -12,6 +14,7 @@ export class PostsService {
     private readonly repo: PostsRepository,
     private configService: ConfigService,
     @Inject(forwardRef(() => LocationsService)) private locationsService: LocationsService,
+    @Inject(forwardRef(() => UsersService)) private usersService: UsersService,
   ) {}
 
   async getAll() {
@@ -22,9 +25,14 @@ export class PostsService {
     if (!user) {
       ErrorHelper.UnauthorizedException('Người dùng chưa đăng nhập');
     }
+    const author = await this.usersService.findById(user._id);
+    if (!author) {
+      ErrorHelper.UnauthorizedException('Người dùng không tồn tại');
+    }
     //WHAT: Check exited slug
-    const exitedPost = this.repo.find({ slug: data.slug });
+    const exitedPost = await this.repo.findOne({ slug: data.slug });
     if (exitedPost) {
+      console.log(exitedPost);
       ErrorHelper.BadRequestException('Slug đã tồn tại');
     }
 
@@ -33,6 +41,6 @@ export class PostsService {
     if (!location) {
       ErrorHelper.BadRequestException('Địa chỉ không tồn tại');
     }
-    return await this.repo.create({ user_id: user._id, ...data, location });
+    return await this.repo.create({ user_id: author._id, user_name: author.user_name, ...data, location });
   }
 }

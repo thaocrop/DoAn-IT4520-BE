@@ -3,7 +3,7 @@ import { Document, SchemaTypes, Types } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 import mongooseAggregatePaginate = require('mongoose-aggregate-paginate-v2');
-import { BaseSchema, Status } from 'src/base';
+import { BaseSchema, IObjectId, Status } from 'src/base';
 
 import { LocationType } from './locations.enum';
 
@@ -15,10 +15,10 @@ class Locations extends BaseSchema {
   name?: string;
 
   @Prop({ type: Types.ObjectId })
-  city_id?: string;
+  city_id?: IObjectId;
 
   @Prop({ type: Types.ObjectId })
-  district_id?: string;
+  district_id?: IObjectId;
 
   @Prop({ type: String })
   codename: string;

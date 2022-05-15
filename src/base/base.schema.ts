@@ -1,9 +1,17 @@
+import { Prop } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
 
 export class BaseSchema {
-  _id?: Types.ObjectId;
+  @Prop({ type: Types.ObjectId })
+  _id?: IObjectId;
+
+  @Prop({ type: String })
   __v?: string;
+
+  @Prop({ type: Date })
   createdAt?: Date;
+
+  @Prop({ type: Date })
   updatedAt?: Date;
 }
 

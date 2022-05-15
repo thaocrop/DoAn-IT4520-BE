@@ -11,6 +11,9 @@ export class PostDto {
   location_id: string;
 
   @IsString()
+  address: string;
+
+  @IsString()
   short_description: string;
 
   @IsString()

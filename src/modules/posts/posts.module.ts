@@ -4,6 +4,7 @@ import { MONGO_CONNECTION_NAME } from 'src/database';
 
 import { LocationsModule } from '../locations';
 
+import { UsersModule } from './../users/users.module';
 import { PostsController } from './posts.controller';
 import { PostsRepository } from './posts.repository';
 import { Posts, PostsSchema } from './posts.schema';
@@ -17,7 +18,11 @@ const dbSchemas = [
 ];
 
 @Module({
-  imports: [MongooseModule.forFeature(dbSchemas, MONGO_CONNECTION_NAME), forwardRef(() => LocationsModule)],
+  imports: [
+    MongooseModule.forFeature(dbSchemas, MONGO_CONNECTION_NAME),
+    forwardRef(() => LocationsModule),
+    forwardRef(() => UsersModule),
+  ],
   controllers: [PostsController],
   providers: [PostsService, PostsRepository],
   exports: [PostsService],
