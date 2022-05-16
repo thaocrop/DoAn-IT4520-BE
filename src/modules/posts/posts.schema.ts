@@ -7,6 +7,9 @@ import { BaseSchema, Status, IObjectId } from 'src/base';
 
 import { Locations } from '../locations';
 
+@Schema({
+  timestamps: true,
+})
 class Comment extends BaseSchema {
   @Prop({ type: String })
   user_name: string;
@@ -54,7 +57,7 @@ class Posts extends BaseSchema {
   @Prop({ type: [Number], default: [] })
   rates: number[];
 
-  @Prop({ type: Number, default: 5 })
+  @Prop({ type: Number, default: 100 })
   rate: number;
 
   @Prop({ type: String })

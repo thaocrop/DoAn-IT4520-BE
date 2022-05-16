@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { FilterQuery, Types } from 'mongoose';
 import { Status } from 'src/base';
-import { comparePbkdf2, pbkdf2 } from 'src/helpers';
+import { comparePbkdf2, ErrorHelper, pbkdf2 } from 'src/helpers';
 import { ConfigService } from 'src/shared/config/config.service';
 
 import { AuthDto } from '../auth';
@@ -40,5 +40,14 @@ export class UsersService {
 
   async verifyPassword(user: Users, password: string) {
     return await comparePbkdf2(password, user.password);
+  }
+
+  async updateUser(id: string, params: Partial<Users>) {
+    const user = await this.findById(id);
+    if (!user) {
+      ErrorHelper.BadRequestException('Bài viết không tồn tại');
+    }
+    console.log(params);
+    return this.repo.updateById(id, params);
   }
 }
