@@ -1,16 +1,16 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { Types } from 'mongoose';
 import { Status } from 'src/base';
-import { ErrorHelper } from 'src/helpers';
+import { calcDistance, ErrorHelper } from 'src/helpers';
 import { ConfigService } from 'src/shared/config/config.service';
-import DOMPurify from 'dompurify';
 
 import { UsersService } from '../users';
 
 import { LocationsService } from './../locations/locations.service';
 import { PostDto, PostPageDto, UpdatePostDto } from './posts.dto';
 import { PostsRepository } from './posts.repository';
-import { Posts } from './posts.schema';
+import { Posts, PostsDocument } from './posts.schema';
+import { PostFilterType } from './posts.enum';
 
 @Injectable()
 export class PostsService {
@@ -41,19 +41,89 @@ export class PostsService {
     const options: any = {
       limit: limit ? Number(limit) : 10,
       page: page ? Number(page) : 1,
+    };
+    let sortOption: any = {
       createdAt: -1,
     };
     // if {status}
-    const aggQuery = [
+
+    if (params.post_filter) {
+      if (params.post_filter === PostFilterType.LIKE) {
+        sortOption = { like: -1 };
+      } else if (params.post_filter === PostFilterType.RATE) {
+        sortOption = { rate: -1 };
+      }
+    }
+    let aggQuery: any = [
       {
         $match: {
           status: status || { $ne: Status.DELETED },
         },
       },
+      {
+        $sort: sortOption,
+      },
     ];
+
+    if (params.post_filter && params.post_filter === PostFilterType.COMMENT) {
+      aggQuery = [
+        {
+          $match: {
+            status: status || { $ne: Status.DELETED },
+          },
+        },
+        {
+          $addFields: { comments_count: { $size: { $ifNull: ['$comments', []] } } },
+        },
+        {
+          $sort: { comments_count: -1 },
+        },
+        {
+          $project: { comments_count: 0 },
+        },
+      ];
+    }
+
+    if (params.location_id) {
+      return await this.getByLocation(params);
+    }
+
+    //@ts-ignore
     const aggregateModel = this.repo.getModel().aggregate(aggQuery);
     const res = await this.repo.getAggModel().aggregatePaginate(aggregateModel, options);
     return res;
+  }
+
+  async getByLocation(params: PostPageDto) {
+    const { page, limit, location_id } = params;
+    if (location_id) {
+      const location = await this.locationsService.findById(location_id);
+      if (!location) {
+        ErrorHelper.BadRequestException('Địa chỉ không tồn tại');
+      }
+      const lmt = limit ? Number(limit) : 10;
+      const { lat, lng } = location;
+      const totalPost = await this.getAll();
+      const totalPages = Math.ceil(totalPost.length / lmt);
+      const posts: Array<any> = totalPost
+        .map((post) => {
+          return { ...post, distance: calcDistance(lat, lng, post.location.lat, post.location.lng) };
+        })
+        .sort((a, b) => a.distance - b.distance);
+      return {
+        docs: posts.slice(lmt * (page - 1), page * lmt),
+        hasNextPage: false,
+        hasPrevPage: false,
+        limit: 10,
+        nextPage: null,
+        page: Number(page),
+        pagingCounter: 1,
+        prevPage: null,
+        totalDocs: totalPost.length,
+        totalPages,
+      };
+    }
+    return this.getList(params);
   }
 
   async create(user, data: PostDto) {
@@ -135,13 +205,12 @@ export class PostsService {
     }
 
     const newPostRate = author.posts_rate ? [...author.posts_rate, { id, rate }] : [{ id, rate }];
-    const userup = await this.usersService.updateUser(author._id, { posts_rate: [...newPostRate] });
-    console.log(userup);
+    await this.usersService.updateUser(author._id, { posts_rate: [...newPostRate] });
 
     const newRates = post.rates ? [...post.rates, rate] : [rate];
     const newRate = newRates.reduce((sum, value) => sum + value, 0) / newRates.length;
 
-    return await this.updatePost(id, { rates: [...newRates], rate: newRate });
+    return await this.updatePost(id, { rates: [...newRates], rate: Number(newRate.toFixed(2)) });
   }
 
   async commentPost(user, id: string, comment: string) {

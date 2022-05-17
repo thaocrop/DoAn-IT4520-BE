@@ -29,11 +29,11 @@ class Locations extends BaseSchema {
   @Prop({ type: String })
   short_codename: string;
 
-  @Prop({ type: String })
-  lat: string;
+  @Prop({ type: Number })
+  lat: number;
 
-  @Prop({ type: String })
-  lng: string;
+  @Prop({ type: Number })
+  lng: number;
 
   @Prop({ type: String, enum: Object.values(Status), default: Status.ACTIVE })
   status: Status;

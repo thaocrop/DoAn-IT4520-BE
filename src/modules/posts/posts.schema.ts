@@ -68,6 +68,9 @@ class Posts extends BaseSchema {
 }
 
 const PostsSchema = SchemaFactory.createForClass(Posts);
+PostsSchema.index({
+  startLocation: '2dsphere',
+});
 PostsSchema.plugin(mongoosePaginate);
 PostsSchema.plugin(mongooseAggregatePaginate);
 

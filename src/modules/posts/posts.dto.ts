@@ -1,6 +1,8 @@
 import { IsEnum, IsNumber, IsNumberString, IsOptional, IsString } from 'class-validator';
 import { Status } from 'src/base';
 
+import { PostFilterType } from './posts.enum';
+
 export class PostDto {
   @IsString()
   title: string;
@@ -43,6 +45,15 @@ export class PostPageDto {
   @IsString()
   @IsEnum(Status, { each: true })
   status?: Status;
+
+  @IsOptional()
+  @IsString()
+  location_id?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsEnum(PostFilterType, { each: true })
+  post_filter?: PostFilterType;
 }
 
 export class PostRateDto {
