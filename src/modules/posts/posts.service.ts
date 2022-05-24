@@ -159,6 +159,11 @@ export class PostsService {
       ErrorHelper.BadRequestException('Bài viết không tồn tại');
     }
 
+    //WHAT: Check exited slug
+    const exitedPost = await this.repo.findOne({ slug: params.slug });
+    if (exitedPost && post.slug !== params.slug) {
+      ErrorHelper.BadRequestException('Slug đã tồn tại');
+    }
     let location = post.location;
 
     //WHAT: check new location
