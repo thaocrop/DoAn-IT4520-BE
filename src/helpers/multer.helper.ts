@@ -20,7 +20,7 @@ export const checkFileType = (req, file, cb) => {
   // Check file size
 
   if (mimetype && extname) {
-    if (fileSize <= 102400) {
+    if (fileSize <= 10240000) {
       return cb(null, true);
     } else {
       req.errorImage = 'Dung lượng ảnh tối đa là 10mb';
